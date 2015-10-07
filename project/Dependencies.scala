@@ -8,6 +8,7 @@ object Dependencies {
   val excludeNettyIo = ExclusionRule(organization = "io.netty", artifact= "netty-all")
   val excludeAsm = ExclusionRule(organization = "asm")
   val excludeQQ = ExclusionRule(organization = "org.scalamacros")
+  val excludeGuava = ExclusionRule(organization = "com.google.guava", artifact="guava")
 
   lazy val typeSafeConfigDeps = "com.typesafe" % "config" % "1.2.1"
   lazy val yammerDeps = "com.yammer.metrics" % "metrics-core" % "2.2.0"
@@ -29,8 +30,8 @@ object Dependencies {
   ) ++ yodaDeps
 
   val ctakesVersion = sys.env.getOrElse("CTAKES_VERSION", "3.2.2")
-
-  val sparkVersion = sys.env.getOrElse("SPARK_VERSION", "1.5.0")
+  val sparkVersion = sys.env.getOrElse("SPARK_VERSION", "1.5.1")
+  val clearTkVersion = sys.env.getOrElse("CLEARTK_VERSION", "2.0.0")
 
   lazy val sparkDeps = Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided" excludeAll(excludeNettyIo, excludeQQ),
@@ -70,25 +71,45 @@ object Dependencies {
   )
 
   lazy val cTakesDeps = Seq(
-     "org.apache.ctakes" % "ctakes-type-system" % ctakesVersion,
-     "org.apache.ctakes" % "ctakes-core" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-core" % ctakesVersion % "runtime" excludeAll(excludeGuava),
+     "org.apache.ctakes" % "ctakes-lvg-res" % ctakesVersion,
+     "net.sourceforge.ctakesresources" % "ctakes-resources-lvg2008" % "3.2.1.1",
+     "org.apache.ctakes" % "ctakes-lvg" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-context-tokenizer" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-pos-tagger" % ctakesVersion,
      "org.apache.ctakes" % "ctakes-chunker" % ctakesVersion,
      "org.apache.ctakes" % "ctakes-constituency-parser" % ctakesVersion,
-     "org.apache.ctakes" % "ctakes-context-tokenizer" % ctakesVersion,
-     "org.apache.ctakes" % "ctakes-dependency-parser" % ctakesVersion,
      "org.apache.ctakes" % "ctakes-dictionary-lookup" % ctakesVersion,
-     "org.apache.ctakes" % "ctakes-dictionary-lookup-fast" % ctakesVersion,
-     "org.apache.ctakes" % "ctakes-assertion" % ctakesVersion,
-     "org.cleartk" % "cleartk-ml" % "2.0.0"
+     "org.apache.ctakes" % "ctakes-dependency-parser" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-assertion" % ctakesVersion
+     //"org.apache.ctakes" % "ctakes-type-system" % ctakesVersion,
+     //"org.apache.ctakes" % "ctakes-dictionary-lookup-fast" % ctakesVersion,
+  )
+
+  lazy val cpipelineDeps = Seq(
+     "it.cnr.iac" % "ctakes-clinical-pipeline" % "0.0.2"
+  )
+
+  lazy val clearTkDeps = Seq(
+     "org.cleartk" % "cleartk-ml" % clearTkVersion,
+     "org.cleartk" % "leartk-ml-liblinear" % clearTkVersion
+  )
+
+  lazy val uimaDeps = Seq(
+     "org.apache.uima" % "uimaj-core" % "2.4.0",
+     "org.apache.uima" % "uimafit-core" % "2.1.0"
   )
 		
-  lazy val serverDeps = apiDeps ++ yodaDeps ++ cTakesDeps
+
+  lazy val serverDeps = apiDeps ++ yodaDeps ++ clinicalDeps
+  lazy val clinicalDeps = cTakesDeps ++ clearTkDeps ++ cpipelineDeps ++ uimaDeps
   lazy val apiDeps = sparkDeps :+ typeSafeConfigDeps
 
   val repos = Seq(
     "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/",
     "sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     "spray repo" at "http://repo.spray.io",
-    "Maven Central" at "http://repo1.maven.org/maven2/"
+    "Maven Central" at "http://repo1.maven.org/maven2/",
+    "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/"
   )
 }
