@@ -27,6 +27,8 @@ object Dependencies {
   ) ++ yodaDeps
 
   val sparkVersion = sys.env.getOrElse("SPARK_VERSION", "1.4.1")
+  val ctakesVersion = sys.env.getOrElse("CTAKES_VERSION", "3.2.2")
+
   lazy val sparkDeps = Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided" excludeAll(excludeNettyIo, excludeQQ),
     // Force netty version.  This avoids some Spark netty dependency problem.
@@ -43,7 +45,6 @@ object Dependencies {
     "com.typesafe.slick" %% "slick" % "2.1.0",
     "com.h2database" % "h2" % "1.3.170",
     "commons-dbcp" % "commons-dbcp" % "1.4"
-
   )
 
   lazy val logbackDeps = Seq(
@@ -59,13 +60,27 @@ object Dependencies {
   lazy val securityDeps = Seq(
      "org.apache.shiro" % "shiro-core" % "1.2.4"
   )
+
+  lazy val cTakesDeps = Seq(
+     "org.apache.ctakes" % "ctakes-type-system" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-core" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-chunker" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-constituency-parser" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-context-tokenizer" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-dependency-parser" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-dictionary-lookup" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-dictionary-lookup-fast" % ctakesVersion,
+     "org.apache.ctakes" % "ctakes-assertion" % ctakesVersion,
+     "org.cleartk" % "cleartk-ml" % "2.0.0"
+  )
 		
-  lazy val serverDeps = apiDeps ++ yodaDeps
+  lazy val serverDeps = apiDeps ++ yodaDeps ++ cTakesDeps
   lazy val apiDeps = sparkDeps :+ typeSafeConfigDeps
 
   val repos = Seq(
     "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/",
     "sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
-    "spray repo" at "http://repo.spray.io"
+    "spray repo" at "http://repo.spray.io",
+    "Maven Central" at "http://repo1.maven.org/maven2/"
   )
 }
