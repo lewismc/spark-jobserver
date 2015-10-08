@@ -87,7 +87,7 @@ object JobServerBuild extends Build {
   )
 
   lazy val jobServerTestJarSettings = Seq(
-    libraryDependencies ++= sparkDeps ++ apiDeps,
+    libraryDependencies ++= sparkDeps ++ apiDeps ++ cpipelineDeps ++ uimaDeps,
     publishArtifact := false,
     description := "Test jar for Spark Job Server",
     exportJars := true        // use the jar instead of target/classes
